@@ -1,10 +1,12 @@
 import 'package:client/screens/home_screen.dart';
 import 'package:client/screens/login_screen.dart';
-import 'package:client/screens/surat_ijin_menu.dart';
-import 'package:client/screens/template_editor.dart';
-import 'package:client/screens/employee_izin_form.dart';
-import 'package:client/screens/admin_izin_manager.dart';
-import 'package:client/screens/izin_count_view.dart';
+import 'package:client/screens/Admin/surat_ijin_menu.dart' as admin_ijin;
+import 'package:client/screens/Karyawan/surat_ijin_menu.dart' as karyawan_ijin;
+import 'package:client/screens/Admin/template_editor.dart';
+import 'package:client/screens/Karyawan/employee_izin_form.dart';
+import 'package:client/screens/Admin/admin_izin_manager.dart';
+import 'package:client/screens/Admin/izin_count_view.dart';
+import 'package:client/screens/Admin/home_admin.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter router = GoRouter(
@@ -16,12 +18,12 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: "/",
       name: "home",
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => const HomeAdmin(),
     ),
     GoRoute(
       path: "/home",
       name: "home_alt",
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => const HomeAdmin(),
     ),
     GoRoute(
       path: "/login",
@@ -31,7 +33,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: "/surat-ijin",
       name: "surat_ijin",
-      builder: (context, state) => const SuratIjinMenu(),
+      builder: (context, state) => const admin_ijin.SuratIjinMenu(),
       routes: [
         GoRoute(
           path: 'template',
