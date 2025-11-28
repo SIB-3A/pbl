@@ -1,3 +1,4 @@
+import 'package:client/services/auth_service.dart';
 import 'package:client/widgets/custom_button.dart';
 import 'package:client/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -14,18 +15,25 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
 
-  @override
-  void initState() {
-    super.initState();
-    _emailController.text = 'admin@email.com';
-    _passwordController.text = '123';
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _emailController.text = '';
+  //   _passwordController.text = '';
+  // }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> handleLogin() async {
+    await AuthService.instance.login(
+      _emailController.text,
+      _passwordController.text,
+    );
   }
 
   Widget header() {
@@ -60,6 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: Text('HRIS', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
+
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsetsGeometry.all(20),
@@ -129,8 +138,8 @@ class _LoginScreenState extends State<LoginScreen> {
               // button
               CustomButton(
                 backgroundColor: const Color.fromRGBO(29, 97, 231, 1),
+                onPressed: handleLogin,
                 child: Text("Masuk"),
-                onPressed: () {},
               ),
             ],
           ),
