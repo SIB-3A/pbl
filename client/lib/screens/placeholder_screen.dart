@@ -3,9 +3,9 @@ import 'package:go_router/go_router.dart';
 
 class PlaceholderScreen extends StatelessWidget {
   final String title;
-  
+
   const PlaceholderScreen({super.key, required this.title});
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,11 +18,7 @@ class PlaceholderScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.construction,
-              size: 80,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.construction, size: 80, color: Colors.grey[400]),
             const SizedBox(height: 20),
             Text(
               'Halaman $title',
@@ -35,10 +31,7 @@ class PlaceholderScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               'Sedang dalam pengembangan',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 30),
             ElevatedButton(
@@ -52,7 +45,10 @@ class PlaceholderScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF00A1D6),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 12,
+                ),
               ),
               child: const Text('Kembali'),
             ),

@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:client/screens/login_screen.dart';
 import 'package:client/screens/home_screen.dart';
 import 'package:client/screens/placeholder_screen.dart';
-import 'package:client/screens/Admin/home_admin.dart'; 
-import 'package:client/screens/Admin/home_admin_main_screen.dart';
+import 'package:client/screens/Admin/home_admin.dart';
+//import 'package:client/screens/Admin/home_admin_main_screen.dart';
 import 'package:client/screens/Admin/izin_laporan_menu.dart';
 import 'package:client/screens/Admin/admin_izin_manager.dart';
 
@@ -17,7 +17,7 @@ final GoRouter router = GoRouter(
       name: 'login',
       builder: (context, state) => const LoginScreen(),
     ),
-    
+
     // HOME SCREEN WITH 6 MENU BUTTONS
     GoRoute(
       path: '/',
@@ -31,9 +31,9 @@ final GoRouter router = GoRouter(
       name: 'laporan_izin',
       builder: (context, state) => const AdminIzinDashboard(),
     ),
-    
+
     GoRoute(
-      path: '/kelola-izin', 
+      path: '/kelola-izin',
       name: 'kelola_izin',
       builder: (context, state) => const AdminIzinManager(),
     ),
@@ -44,35 +44,36 @@ final GoRouter router = GoRouter(
       name: 'absensi',
       builder: (context, state) => const PlaceholderScreen(title: 'Absensi'),
     ),
-    
+
     GoRoute(
       path: '/karyawan',
-      name: 'karyawan', 
+      name: 'karyawan',
       builder: (context, state) => const PlaceholderScreen(title: 'Karyawan'),
     ),
-    
+
     GoRoute(
       path: '/payroll',
       name: 'payroll',
       builder: (context, state) => const PlaceholderScreen(title: 'Payroll'),
     ),
-    
+
     GoRoute(
       path: '/pengaturan',
       name: 'pengaturan',
       builder: (context, state) => const PlaceholderScreen(title: 'Pengaturan'),
     ),
 
-    // ADMIN SHELL (keeping existing structure)
-    ShellRoute(
-      builder: (context, state, child) => AdminHomeMain(child: child),
-      routes: [
-        GoRoute(
-          path: '/admin-home',
-          name: 'admin_home', 
-          pageBuilder: (context, state) => const NoTransitionPage(child: AdminHomeScreen()),
-        ),
-      ],
-    ),
+    // // ADMIN SHELL (keeping existing structure)
+    // ShellRoute(
+    //   builder: (context, state, child) => AdminHomeMain(child: child),
+    //   routes: [
+    //     GoRoute(
+    //       path: '/admin-home',
+    //       name: 'admin_home',
+    //       pageBuilder: (context, state) =>
+    //           const NoTransitionPage(child: AdminHomeScreen()),
+    //     ),
+    //   ],
+    // ),
   ],
 );
