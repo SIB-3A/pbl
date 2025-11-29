@@ -31,6 +31,7 @@ class AuthController extends Controller
         return ResponseWrapper::make(
             "Login Sukses",
             200,
+            true,
             ["token" => $token, "user_id" => $user["id"]],
             null,
         );
@@ -60,6 +61,12 @@ class AuthController extends Controller
             "user_id" => $userCreated["id"],
         ]);
 
-        return ResponseWrapper::make("Akun berhasil dibuat", 201, null, null);
+        return ResponseWrapper::make(
+            "Akun berhasil dibuat",
+            true,
+            201,
+            null,
+            null,
+        );
     }
 }

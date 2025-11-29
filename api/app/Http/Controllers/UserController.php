@@ -12,8 +12,32 @@ class UserController extends Controller
     {
         $user = User::with("employee")->find($id);
         if (!$user) {
-            return ResponseWrapper::make("User not found", 404, null, null);
+            return ResponseWrapper::make(
+                "User not found",
+                404,
+                true,
+                null,
+                null,
+            );
         }
-        return ResponseWrapper::make("User found", 200, ["user" => $user], null);
+        return ResponseWrapper::make(
+            "User found",
+            200,
+            true,
+            ["user" => [$user]],
+            null,
+        );
+    }
+
+    public function show_users()
+    {
+        $data = User::all();
+        return ResponseWrapper::make(
+            "User found",
+            200,
+            true,
+            ["users" => $data],
+            null,
+        );
     }
 }
