@@ -134,15 +134,18 @@ class _AdminIzinDashboardState extends State<AdminIzinDashboard> {
                                 ),
                               );
                             final data = snapshot.data ?? {};
-                            final pending = data['total_pending'] ?? 0;
-                            final total = data['total_employees'] ?? 1;
+                            final employeesWithLetters = data['total_employees_with_letters'];
+                            final totalEmployees = data['total_employees'];
+                            final lettersApproved = data['total_letters_approved'];
+                            final totalLetters = data['total_letters'];
+
                             return Row(
                               children: [
                                 Expanded(
                                   child: _buildCleanStatCard(
                                     icon: Icons.person_outline_rounded,
-                                    value: pending.toString(),
-                                    total: total.toString(),
+                                    value: employeesWithLetters.toString(),
+                                    total: totalEmployees.toString(),
                                     label: "Karyawan Ajukan Izin",
                                   ),
                                 ),
@@ -150,9 +153,9 @@ class _AdminIzinDashboardState extends State<AdminIzinDashboard> {
                                 Expanded(
                                   child: _buildCleanStatCard(
                                     icon: Icons.pending_actions,
-                                    value: pending.toString(),
-                                    total: total.toString(),
-                                    label: "Menunggu Approval",
+                                    value: lettersApproved.toString(),
+                                    total: totalLetters.toString(),
+                                    label: "Surat Izin yang sudah di terima",
                                   ),
                                 ),
                               ],
