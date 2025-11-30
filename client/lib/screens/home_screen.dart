@@ -41,7 +41,7 @@ Widget build(BuildContext context) {
                           children: [
                             Text('Selamat Datang', style: TextStyle(color: Colors.white70, fontSize: 16)),
                             SizedBox(height: 4),
-                            Text('HRIS System', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
+                            Text('HRIS Sistem', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),

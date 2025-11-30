@@ -21,6 +21,8 @@ Route::put('/letters/{id}/status', [LetterController::class, 'updateStatus']);
 Route::delete('/letters/{id}', [LetterController::class, 'destroy']);
 
 Route::get('/izin-dashboard', IzinDashboardController::class);
+Route::get('/export-approved-letters', [IzinDashboardController::class, 'exportApprovedLetters']);
+
 
 
 
