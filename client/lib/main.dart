@@ -1,8 +1,12 @@
 import 'package:client/route.dart';
+import 'package:client/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await UserService.instance.getUsers();
   runApp(const MyApp());
 }
 

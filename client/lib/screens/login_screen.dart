@@ -39,17 +39,18 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!context.mounted) {
       return;
     }
+
     if (!login["success"]) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Login failed")));
+      ).showSnackBar(SnackBar(content: Text("Email Atau Password Salah")));
       return;
     }
     if (login["isAdmin"]) {
+      context.go("/admin");
+    } else {
       context.go("/home");
-      return;
     }
-    context.go("/home");
   }
 
   Widget header() {
@@ -142,7 +143,9 @@ class _LoginScreenState extends State<LoginScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    context.go("/forgot-password");
+                  },
                   child: Text(
                     "Lupa Password",
                     style: TextStyle(color: Color.fromRGBO(29, 97, 231, 1)),

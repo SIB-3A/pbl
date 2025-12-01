@@ -10,25 +10,26 @@ class ApiResponse<T> {
     this.data,
     this.error,
   });
-
   factory ApiResponse.fromJson(
     Map<String, dynamic> json,
     T Function(Object? jsonData)? dataParser,
   ) {
     final rawData = json['data'];
 
-    final T? parsedData;
-    if (dataParser != null) {
+    T? parsedData;
+
+    if (rawData is List && dataParser != null) {
+      // cast list properly
+      parsedData = rawData.map((item) => dataParser(item)).toList() as T;
+    } else if (dataParser != null) {
       parsedData = dataParser(rawData);
     } else if (rawData is T) {
       parsedData = rawData;
-    } else {
-      parsedData = null; // or throw if you want strict behavior
     }
 
     return ApiResponse<T>(
-      message: json['message'] as String? ?? '',
-      success: json['success'] as bool? ?? false,
+      message: json['message'] ?? '',
+      success: json['success'] ?? false,
       data: parsedData,
       error: json['error'],
     );

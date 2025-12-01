@@ -45,18 +45,23 @@ class AuthService extends BaseService {
     final token = await storage.read(key: "token");
     final isAdmin = await storage.read(key: "isAdmin");
     final loggingIn = state.uri.toString() == "/login";
+
     if (token == null) {
       return loggingIn ? null : "/login";
     }
-    if (!loggingIn) {
-      return "/home";
-    }
-    if (isAdmin == "true") {
-      return "/admin";
+    if (loggingIn) {
+      return isAdmin == "true" ? "/admin" : "/home";
     }
     if (state.uri.toString().startsWith("/admin") && isAdmin != "true") {
       return "/home";
     }
     return null;
+  }
+
+  Future<void> logout(BuildContext context) async {
+    final storage = FlutterSecureStorage();
+    await storage.deleteAll();
+    if (!context.mounted) return;
+    context.go("/login");
   }
 }

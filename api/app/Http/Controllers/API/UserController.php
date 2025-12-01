@@ -25,7 +25,7 @@ class UserController extends Controller
 
     public function show_users()
     {
-        $data = User::all();
+        $data = User::with("employee")->get();
         return ResponseWrapper::make("User found", 200, true, $data, null);
     }
 }
