@@ -8,8 +8,8 @@ class ResponseWrapper
         string $message,
         int $status,
         bool $success,
-        array|null $data,
-        array|null $errors,
+        mixed $data,
+        mixed $errors,
     ) {
         if (!is_null($errors)) {
             return response()->json(

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use App\Helpers\ResponseWrapper;
 use App\Models\User;
+use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
-    //
     public function show_user(string $id)
     {
         $user = User::with("employee")->find($id);
@@ -20,24 +20,12 @@ class UserController extends Controller
                 null,
             );
         }
-        return ResponseWrapper::make(
-            "User found",
-            200,
-            true,
-            ["user" => [$user]],
-            null,
-        );
+        return ResponseWrapper::make("User found", 200, true, $user, null);
     }
 
     public function show_users()
     {
         $data = User::all();
-        return ResponseWrapper::make(
-            "User found",
-            200,
-            true,
-            ["users" => $data],
-            null,
-        );
+        return ResponseWrapper::make("User found", 200, true, $data, null);
     }
 }

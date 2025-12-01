@@ -32,7 +32,11 @@ class AuthController extends Controller
             "Login Sukses",
             200,
             true,
-            ["token" => $token, "user_id" => $user["id"]],
+            [
+                "token" => $token,
+                "user_id" => $user["id"],
+                "is_admin" => $user["is_admin"],
+            ],
             null,
         );
     }
