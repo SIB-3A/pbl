@@ -17,3 +17,4 @@ DB_PASSWORD=<password_db>
 ```
 6. ubah env: `SESSION_DRIVER=file`
 7. run projectnya
+ 
