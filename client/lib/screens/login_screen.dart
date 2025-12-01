@@ -142,7 +142,9 @@ class _LoginScreenState extends State<LoginScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    context.go("/forgot-password");
+                  },
                   child: Text(
                     "Lupa Password",
                     style: TextStyle(color: Color.fromRGBO(29, 97, 231, 1)),
