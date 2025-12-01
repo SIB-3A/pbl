@@ -1,3 +1,4 @@
+import 'package:client/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
@@ -9,12 +10,7 @@ class ForgotPasswordScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(
-          "Lupa Password",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
+      appBar: CustomAppbar(title: "Lupa Password"),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {

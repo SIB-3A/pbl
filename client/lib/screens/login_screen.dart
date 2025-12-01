@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 alignment: Alignment.centerRight,
                 child: InkWell(
                   onTap: () {
-                    context.go("/forgot-password");
+                    context.push("/forgot-password");
                   },
                   child: Text(
                     "Lupa Password",

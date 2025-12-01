@@ -16,8 +16,9 @@ class NavbarAdmin extends StatelessWidget {
           initialLocation: index == navigationShell.currentIndex,
         );
       },
-      items: const [
+      items: [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+        BottomNavigationBarItem(icon: Icon(Icons.work), label: "Employee"),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: "Employee"),
       ],
     );

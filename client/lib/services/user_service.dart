@@ -30,11 +30,16 @@ class UserService extends BaseService<UserModel> {
     );
   }
 
-  Future<ApiResponse<UserModel<EmployeeModel>>> getLoggedInUser() async {
+  Future<ApiResponse<UserModel<EmployeeModel>>> getUser(int? userId) async {
     final storage = FlutterSecureStorage();
-    String? userId = await storage.read(key: "userId");
-    final response = await dio.get("/user/$userId");
-
+    int? user;
+    if (userId == null) {
+      final userIdString = await storage.read(key: "userId");
+      user = int.tryParse(userIdString ?? "");
+    } else {
+      user = userId;
+    }
+    final response = await dio.get("/user/$user");
     return ApiResponse.fromJson(response.data, (json) {
       return UserModel.fromJson(json as Map<String, dynamic>, (employee) {
         return EmployeeModel.fromJson(employee as Map<String, dynamic>);
