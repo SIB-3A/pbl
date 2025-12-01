@@ -1,22 +1,55 @@
-import 'package:client/screens/home_screen.dart';
-import 'package:client/screens/login_screen.dart';
+import 'package:client/services/auth_service.dart';
+import 'package:client/widgets/navbar_admin.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
+
+import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/admin_screen.dart';
+import 'widgets/navbar_user.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: "/login",
+
   redirect: (context, state) {
-    return;
+    return AuthService.instance.redirectUser(state);
   },
+
   routes: [
-    GoRoute(
-      path: "/",
-      name: "home",
-      builder: (context, state) => const HomeScreen(),
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) => Scaffold(
+        body: navigationShell,
+        bottomNavigationBar: NavbarAdmin(navigationShell: navigationShell),
+      ),
+      branches: [],
     ),
-    GoRoute(
-      path: "/login",
-      name: "login",
-      builder: (context, state) => const LoginScreen(),
+
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) => Scaffold(
+        body: navigationShell,
+        bottomNavigationBar: NavbarUser(navigationShell: navigationShell),
+      ),
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: "/home",
+              builder: (context, state) => const HomeScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: "/profile",
+              builder: (context, state) => const HomeScreen(),
+            ),
+          ],
+        ),
+      ],
     ),
+
+    GoRoute(path: "/login", builder: (context, state) => const LoginScreen()),
+    GoRoute(path: "/admin", builder: (context, state) => const AdminScreen()),
   ],
 );

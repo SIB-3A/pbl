@@ -7,18 +7,28 @@ class ResponseWrapper
     public static function make(
         string $message,
         int $status,
-        array|null $data,
-        array|null $errors,
+        bool $success,
+        mixed $data,
+        mixed $errors,
     ) {
         if (!is_null($errors)) {
             return response()->json(
-                ["message" => $message, "errors" => $errors],
+                [
+                    "message" => $message,
+                    "data" => $data,
+                    "error" => $errors,
+                    "success" => $success,
+                ],
                 $status,
             );
         }
-
         return response()->json(
-            ["message" => $message, "data" => $data],
+            [
+                "message" => $message,
+                "data" => $data,
+                "error" => $errors,
+                "success" => $success,
+            ],
             $status,
         );
     }
