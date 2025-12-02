@@ -1,5 +1,7 @@
 import 'package:client/widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -9,92 +11,115 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController namaController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController alamatController = TextEditingController();
-  final TextEditingController jabatanController = TextEditingController();
-  final TextEditingController departemenController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
-  String? jenisKelamin;
+  final _formKey = GlobalKey<FormBuilderState>();
   bool isObscure = true;
+
+  // --------- CENTRALIZED VALIDATOR ---------- //
+  String? Function(String?) requiredField(String label) {
+    return FormBuilderValidators.required(errorText: "$label harus diisi");
+  }
+
+  // --------- HANDLE REGISTER ---------- //
+  void handleRegister() {
+    if (!_formKey.currentState!.saveAndValidate()) return;
+
+    final form = _formKey.currentState!.value;
+    print("REGISTER DATA:");
+    print(form);
+    // TODO: call your API here
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppbar(title: "Daftar Akun Karyawan"),
+      appBar: const CustomAppbar(title: "Daftar Akun Karyawan"),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              /// LOGO
-              Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 20),
-                child: Center(
-                  child: SizedBox(
-                    height: 60,
-                    child: Image.asset(
-                      'assets/logoo.png', // ganti sesuai path logomu
-                      fit: BoxFit.contain,
+          child: FormBuilder(
+            key: _formKey,
+            child: Column(
+              children: [
+                // LOGO
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 20),
+                  child: Center(
+                    child: SizedBox(
+                      height: 60,
+                      child: Image.asset('assets/logoo.png'),
                     ),
                   ),
                 ),
-              ),
-              const Text(
-                "Daftar akun karyawan\n*hanya admin yang bisa menambahkan data",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Colors.grey),
-              ),
 
-              const SizedBox(height: 20),
+                const Text(
+                  "Daftar akun karyawan\n*hanya admin yang bisa menambahkan data",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
 
-              _buildTextField("Nama Panjang", namaController),
-              _buildTextField("Email", emailController),
+                const SizedBox(height: 20),
 
-              _buildDropdownGender(),
+                // --------- FORM FIELDS ---------- //
+                _formTextField(name: "nama", label: "Nama Panjang"),
 
-              _buildTextField("Alamat", alamatController),
-              _buildTextField("Jabatan", jabatanController),
-              _buildTextField("Departemen", departemenController),
+                _formTextField(
+                  name: "email",
+                  label: "Email",
+                  keyboardType: TextInputType.emailAddress,
+                  validator: FormBuilderValidators.compose([
+                    requiredField("Email"),
+                    FormBuilderValidators.email(errorText: "Email tidak valid"),
+                  ]),
+                ),
 
-              _buildPasswordField(),
+                _formDropdownGender(),
 
-              const SizedBox(height: 25),
+                _formTextField(name: "alamat", label: "Alamat"),
 
-              /// BUTTON DAFTAR
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0094FF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                _formTextField(name: "jabatan", label: "Jabatan"),
+
+                _formTextField(name: "departemen", label: "Departemen"),
+
+                _formPasswordField(),
+
+                const SizedBox(height: 25),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0094FF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: handleRegister,
+                    child: const Text(
+                      "Daftar Karyawan Baru",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
-                  onPressed: () {
-                    // TODO: tambahkan fungsi register
-                  },
-                  child: const Text(
-                    "Daftar Karyawan Baru",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
                 ),
-              ),
 
-              const SizedBox(height: 20),
-            ],
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  // ================== WIDGETS ==================
+  // ---------- REUSABLE FORM FIELD COMPONENTS ---------- //
 
-  Widget _buildTextField(String label, TextEditingController controller) {
+  Widget _formTextField({
+    required String name,
+    required String label,
+    TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: Column(
@@ -102,8 +127,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
         children: [
           Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
-          TextField(
-            controller: controller,
+          FormBuilderTextField(
+            name: name,
+            keyboardType: keyboardType,
+            validator: validator ?? requiredField(label),
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey.shade100,
@@ -117,7 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _buildDropdownGender() {
+  Widget _formDropdownGender() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
       child: Column(
@@ -128,34 +155,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                isExpanded: true,
-                value: jenisKelamin,
-                hint: const Text("Pilih"),
-                items: const [
-                  DropdownMenuItem(value: "Pria", child: Text("Pria")),
-                  DropdownMenuItem(value: "Wanita", child: Text("Wanita")),
-                ],
-                onChanged: (value) {
-                  setState(() => jenisKelamin = value);
-                },
+          FormBuilderDropdown<String>(
+            name: "jenis_kelamin",
+            validator: requiredField("Jenis Kelamin"),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.grey.shade100,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
+            hint: const Text("Pilih"),
+            items: const [
+              DropdownMenuItem(value: "P", child: Text("Pria")),
+              DropdownMenuItem(value: "L", child: Text("Wanita")),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPasswordField() {
+  Widget _formPasswordField() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 25),
       child: Column(
@@ -166,17 +187,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
-          TextField(
-            controller: passwordController,
+          FormBuilderTextField(
+            name: "password",
             obscureText: isObscure,
+            validator: FormBuilderValidators.compose([
+              requiredField("Password"),
+              FormBuilderValidators.minLength(
+                6,
+                errorText: "Password minimal 6 karakter",
+              ),
+            ]),
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey.shade100,
               suffixIcon: IconButton(
                 icon: Icon(isObscure ? Icons.visibility_off : Icons.visibility),
-                onPressed: () {
-                  setState(() => isObscure = !isObscure);
-                },
+                onPressed: () => setState(() => isObscure = !isObscure),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
