@@ -17,7 +17,6 @@ import 'package:client/screens/groupTwo/employee_detail_screen.dart';
 import 'package:client/screens/groupTwo/employee_list_screen.dart';
 import 'package:client/screens/groupTwo/position_crud_screen.dart';
 import 'package:client/screens/groupTwo/role_selection_screen.dart';
-import 'package:client/widgets/navbar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'screens/admin_screen.dart';
@@ -26,10 +25,10 @@ import 'widgets/navbar_user.dart';
 final storage = FlutterSecureStorage();
 
 final GoRouter router = GoRouter(
-  initialLocation: "/login",
-  redirect: (context, state) {
-    return AuthService.instance.redirectUser(state);
-  },
+  initialLocation: "/role-selection",
+  // redirect: (context, state) {
+  //   return AuthService.instance.redirectUser(state);
+  // },
 
   routes: [
     // ========================================
@@ -44,29 +43,29 @@ final GoRouter router = GoRouter(
         // Branch 1: Admin Dashboard
         StatefulShellBranch(
           routes: [
-            GoRoute(
-              path: "/admin",
-              builder: (context, state) => const AdminDashboardScreen(),
-            ),
-            // Alternative: bisa menggunakan AdminScreen() dari main
             // GoRoute(
             //   path: "/admin",
-            //   builder: (context, state) => const AdminScreen(),
+            //   builder: (context, state) => const AdminDashboardScreen(),
             // ),
+            // Alternative: bisa menggunakan AdminScreen() dari main
+            GoRoute(
+              path: "/admin",
+              builder: (context, state) => const AdminScreen(),
+            ),
           ],
         ),
         // Branch 2: Employee Management
         StatefulShellBranch(
           routes: [
-            GoRoute(
-              path: "/admin/employee",
-              builder: (context, state) => const EmployeeListScreen(isKaryawanMode: false),
-            ),
-            // Alternative: bisa menggunakan EmployeeScreen() dari main
             // GoRoute(
             //   path: "/admin/employee",
-            //   builder: (context, state) => const EmployeeScreen(),
+            //   builder: (context, state) => const EmployeeListScreen(isKaryawanMode: false),
             // ),
+            // Alternative: bisa menggunakan EmployeeScreen() dari main
+            GoRoute(
+              path: "/admin/employee",
+              builder: (context, state) => const EmployeeScreen(),
+            ),
             GoRoute(
               path: "/admin/profile-detail",
               builder: (context, state) {
