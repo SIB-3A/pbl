@@ -10,19 +10,28 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final router = GoRouter.of(context);
-    final canPop = router.canPop(); // detect if we can go back
+    final canPop = router.canPop();
 
     return AppBar(
+      backgroundColor: const Color(0xFF22A9D6),
+      elevation: 0,
+
       leading: canPop
           ? IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () => context.pop(),
             )
           : null,
+
       title: Text(
         title,
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
       ),
+
       actions: actions,
     );
   }

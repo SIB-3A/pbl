@@ -26,93 +26,135 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final form = _formKey.currentState!.value;
     print("REGISTER DATA:");
     print(form);
-    // TODO: call your API here
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppbar(title: "Daftar Akun Karyawan"),
+      // =============== CUSTOM APPBAR =============== //
+      appBar: const CustomAppbar(
+        title: "Tambah Data Karyawan", // judul hanya di sini
+      ),
+
       backgroundColor: Colors.white,
+
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: FormBuilder(
-            key: _formKey,
-            child: Column(
-              children: [
-                // LOGO
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 20),
-                  child: Center(
-                    child: SizedBox(
-                      height: 60,
-                      child: Image.asset('assets/logoo.png'),
-                    ),
+          child: Column(
+            children: [
+              // =============== HEADER BARU =============== //
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.only(top: 16, bottom: 22),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF22A9D6),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
                   ),
                 ),
+                child: Column(
+                  children: [
+                    // LOGO PUTIH
+                    SizedBox(
+                      height: 55,
+                      child: Image.asset('assets/logoputih.png'),
+                    ),
+                    const SizedBox(height: 14),
 
-                const Text(
-                  "Daftar akun karyawan\n*hanya admin yang bisa menambahkan data",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-
-                const SizedBox(height: 20),
-
-                // --------- FORM FIELDS ---------- //
-                _formTextField(name: "nama", label: "Nama Panjang"),
-
-                _formTextField(
-                  name: "email",
-                  label: "Email",
-                  keyboardType: TextInputType.emailAddress,
-                  validator: FormBuilderValidators.compose([
-                    requiredField("Email"),
-                    FormBuilderValidators.email(errorText: "Email tidak valid"),
-                  ]),
-                ),
-
-                _formDropdownGender(),
-
-                _formTextField(name: "alamat", label: "Alamat"),
-
-                _formTextField(name: "jabatan", label: "Jabatan"),
-
-                _formTextField(name: "departemen", label: "Departemen"),
-
-                _formPasswordField(),
-
-                const SizedBox(height: 25),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0094FF),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                    // DESKRIPSI SINGKAT (tanpa judul)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 26),
+                      child: Text(
+                        "Lengkapi data karyawan dengan benar ",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                          height: 1.3,
+                        ),
                       ),
                     ),
-                    onPressed: handleRegister,
-                    child: const Text(
-                      "Daftar Karyawan Baru",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
+                  ],
+                ),
+              ),
+
+              // =============== FORM =============== //
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: FormBuilder(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+
+                      // Nama Depan & Belakang
+                      _formNameFields(),
+
+                      // Email
+                      _formTextField(
+                        name: "email",
+                        label: "Email",
+                        keyboardType: TextInputType.emailAddress,
+                        validator: FormBuilderValidators.compose([
+                          requiredField("Email"),
+                          FormBuilderValidators.email(
+                            errorText: "Email tidak valid",
+                          ),
+                        ]),
+                      ),
+
+                      // Gender
+                      _formDropdownGender(),
+
+                      // Alamat
+                      _formTextField(name: "alamat", label: "Alamat"),
+
+                      // Jabatan
+                      _formDropdownJabatan(),
+
+                      // Departemen
+                      _formDropdownDepartemen(),
+
+                      // Password
+                      _formPasswordField(),
+
+                      const SizedBox(height: 25),
+
+                      // BUTTON REGISTER
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(
+                              0xFF22A9D6,
+                            ), // 🔵 warna disamakan
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: handleRegister,
+                          child: const Text(
+                            "Daftar Karyawan Baru",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+                    ],
                   ),
                 ),
-
-                const SizedBox(height: 20),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  // ---------- REUSABLE FORM FIELD COMPONENTS ---------- //
+  // -------------- REUSABLE FIELD -------------- //
 
   Widget _formTextField({
     required String name,
@@ -208,6 +250,131 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // =============== NAME FIELD (ROW) =============== //
+  Widget _formNameFields() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Nama Depan",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                FormBuilderTextField(
+                  name: "nama_depan",
+                  validator: requiredField("Nama Depan"),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Nama Belakang",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                FormBuilderTextField(
+                  name: "nama_belakang",
+                  validator: requiredField("Nama Belakang"),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // =============== JABATAN DROPDOWN =============== //
+  Widget _formDropdownJabatan() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("Jabatan", style: TextStyle(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          FormBuilderDropdown<String>(
+            name: "jabatan",
+            validator: requiredField("Jabatan"),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.grey.shade100,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            hint: const Text("Pilih Jabatan"),
+            items: const [
+              DropdownMenuItem(value: "manager", child: Text("Manager")),
+              DropdownMenuItem(value: "supervisor", child: Text("Supervisor")),
+              DropdownMenuItem(value: "staff", child: Text("Staff")),
+              DropdownMenuItem(value: "intern", child: Text("Intern")),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // =============== DEPARTEMEN DROPDOWN =============== //
+  Widget _formDropdownDepartemen() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Departemen",
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 4),
+          FormBuilderDropdown<String>(
+            name: "departemen",
+            validator: requiredField("Departemen"),
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Colors.grey.shade100,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            hint: const Text("Pilih Departemen"),
+            items: const [
+              DropdownMenuItem(value: "hr", child: Text("HR")),
+              DropdownMenuItem(value: "finance", child: Text("Finance")),
+              DropdownMenuItem(value: "it", child: Text("IT")),
+              DropdownMenuItem(value: "marketing", child: Text("Marketing")),
+            ],
           ),
         ],
       ),
