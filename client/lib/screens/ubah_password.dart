@@ -6,163 +6,153 @@ class UpdatePasswordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isSmallDevice = size.height < 700;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF22A9D6),
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: isSmallDevice ? 10 : 20),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 30),
 
-                      // ====== LOGO ======
-                      Row(
-                        children: [
-                          Image.asset(
-                            'assets/logo.png',
-                            height: 25, // responsive
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            "Logoipsum",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
+              // LOGO
+              Row(children: [Image.asset('assets/logo.png', height: 45)]),
+
+              const SizedBox(height: 25),
+
+              Text(
+                "Ganti Password",
+                style: const TextStyle(
+                  fontSize: 28,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              Text(
+                "Ganti password anda. Untuk password anda\nyang lupa akan ditinggalkan.",
+                style: const TextStyle(fontSize: 12, color: Colors.white70),
+              ),
+
+              const SizedBox(height: 30),
+
+              // ================== WHITE CARD ==================
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ================= PASSWORD BARU ==================
+                    Text(
+                      "Password baru",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    _buildTextField("1234567890"),
+
+                    const SizedBox(height: 25),
+
+                    // ================= ULANGI PASSWORD ==================
+                    Text(
+                      "Ulangi password baru (tidak dilihatkan)",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    _buildTextField("**********"),
+
+                    const SizedBox(height: 30),
+
+                    // ================= BUTTON ==================
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF22A9D6), Color(0xFF22A9D6)],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF22A9D6).withOpacity(0.6),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
-
-                      SizedBox(height: size.height * 0.04),
-
-                      // ====== TITLE ======
-                      Text(
-                        "Ganti Password",
-                        style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      Text(
-                        "Ganti password anda. Untuk password anda yang\nlama, akan ditinggalkan.",
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.black54,
-                        ),
-                      ),
-
-                      SizedBox(height: size.height * 0.04),
-
-                      // ====== LABEL 1======
-                      Text(
-                        "Password Baru",
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      // ====== TEXTFIELD 1======
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: "12345678",
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          minimumSize: const Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        child: const Text(
+                          "Ganti Password",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
                       ),
+                    ),
 
-                      SizedBox(height: size.height * 0.04),
-                      
-                      // ====== LABEL 2======
-                      Text(
-                        "Ketik Ulang Password Baru",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      // ====== TEXTFIELD 2======
-                      TextField(
-                        decoration: InputDecoration(
-                          hintText: "********",
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Colors.grey),
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(height: size.height * 0.04),
-
-                      // ====== BUTTON ======
-                      SizedBox(
-                        width: double.infinity,
-                        height: size.height * 0.065, // responsive button
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2F80ED),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: () {},
-                          child: Text(
-                            "Ganti Password",
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const Spacer(),
-
-                      // ====== BOTTOM DRAG LINE ======
-                      Center(
-                        child: Container(
-                          width: size.width * 0.3,
-                          height: 4,
-                          margin: const EdgeInsets.only(bottom: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.black12,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    // const SizedBox(height: 50),
+                  ],
                 ),
               ),
-            );
-          },
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // ================= CUSTOM TEXTFIELD ==================
+  Widget _buildTextField(String hint) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF22A9D6), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 6,
+            spreadRadius: 1,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: const TextStyle(color: Colors.black87),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
+          border: InputBorder.none,
         ),
       ),
     );
