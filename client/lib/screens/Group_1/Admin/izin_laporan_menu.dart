@@ -215,9 +215,17 @@ class _AdminIzinDashboardState extends State<AdminIzinDashboard> {
                         (context, index) {
                           final dept = data.departments[index];
                           return _buildDepartmentCard(
-                            dept["name"],
-                            dept["count"],
-                          );
+                          name: dept["name"],
+                          count: dept["count"],
+                          onTap: () {
+                            // contoh: buka halaman detail departemen
+                            context.push(
+                              "/admin/department-detail",
+                              extra: dept,
+                            );
+                          },
+                        );
+
                         },
                         childCount: data.departments.length,
                       ),
@@ -292,8 +300,14 @@ class _AdminIzinDashboardState extends State<AdminIzinDashboard> {
     );
   }
 
-  Widget _buildDepartmentCard(String name, String count) {
-    return Container(
+  Widget _buildDepartmentCard({
+  required String name,
+  required String count,
+  required VoidCallback onTap,
+  }) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: const Color(0xFF00C4D6),
@@ -341,6 +355,7 @@ class _AdminIzinDashboardState extends State<AdminIzinDashboard> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
