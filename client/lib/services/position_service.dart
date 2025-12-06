@@ -1,3 +1,4 @@
+import 'dart:convert'; 
 import 'dart:developer';
 import 'package:client/models/position_model.dart';
 import 'package:client/services/base_service.dart';
@@ -95,7 +96,7 @@ class PositionService extends BaseService<PositionModel> {
   }
 
   /// Delete position (admin only)
-  Future<ApiResponse<void>> deletePosition(int id) async {
+   Future<ApiResponse<void>> deletePosition(int id) async {
     try {
       final response = await dio.delete(
         "/positions/$id",
@@ -103,10 +104,55 @@ class PositionService extends BaseService<PositionModel> {
       );
 
       return ApiResponse<void>.fromJson(response.data, (jsonData) => null);
+      
     } on DioException catch (e, s) {
       log("Error: Delete Position Failed", error: e, stackTrace: s);
-
-      throw Exception(e.response?.data['message'] ?? 'Gagal menghapus posisi');
+      
+      // Debug log untuk melihat response detail
+      log("Response status: ${e.response?.statusCode}");
+      log("Response data: ${e.response?.data}");
+      
+      if (e.response?.statusCode == 422) {
+        // Handle validation errors
+        final responseData = e.response?.data;
+        if (responseData != null && responseData is Map) {
+          final errors = responseData['errors'];
+          if (errors != null && errors is Map) {
+            // Ambil pesan error pertama
+            final firstError = errors.values.first;
+            if (firstError is List && firstError.isNotEmpty) {
+              throw Exception(firstError.first);
+            } else if (firstError is String) {
+              throw Exception(firstError);
+            }
+          }
+          final message = responseData['message'];
+          if (message != null) {
+            throw Exception(message);
+          }
+        }
+        throw Exception('Validasi gagal');
+      }
+      
+      if (e.response?.statusCode == 404) {
+        throw Exception('Posisi tidak ditemukan');
+      }
+      
+      if (e.response?.statusCode == 500) {
+        final responseData = e.response?.data;
+        if (responseData != null && responseData is Map) {
+          final message = responseData['message'];
+          if (message != null) {
+            throw Exception(message);
+          }
+        }
+        throw Exception('Terjadi kesalahan pada server. Silakan coba lagi.');
+      }
+      
+      throw Exception(e.message ?? 'Gagal menghapus posisi');
+    } catch (e, s) {
+      log("Error: Delete Position Failed (non-Dio)", error: e, stackTrace: s);
+      rethrow;
     }
   }
 }

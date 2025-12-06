@@ -25,10 +25,10 @@ import 'widgets/navbar_user.dart';
 final storage = FlutterSecureStorage();
 
 final GoRouter router = GoRouter(
-  initialLocation: "/login",
-  redirect: (context, state) {
-    return AuthService.instance.redirectUser(state);
-  },
+  initialLocation: "/role-selection",
+  // redirect: (context, state) {
+  //   return AuthService.instance.redirectUser(state);
+  // },
 
   routes: [
     // ========================================
@@ -86,14 +86,14 @@ final GoRouter router = GoRouter(
               builder: (context, state) => const ProfileScreen(),
             ),
             // Tambahkan route untuk Position dan Department CRUD di shell admin
-            GoRoute(
-              path: "/admin/positions",
-              builder: (context, state) => const PositionCrudScreen(),
-            ),
-            GoRoute(
-              path: "/admin/departments",
-              builder: (context, state) => const DepartmentCrudScreen(),
-            ),
+            // GoRoute(
+            //   path: "/admin/positions",
+            //   builder: (context, state) => const PositionCrudScreen(),
+            // ),
+            // GoRoute(
+            //   path: "/admin/departments",
+            //   builder: (context, state) => const DepartmentCrudScreen(),
+            // ),
           ],
         ),
       ],
@@ -225,12 +225,12 @@ final GoRouter router = GoRouter(
 
     // Alternative CRUD routes (non-shell) untuk backward compatibility
     GoRoute(
-      path: "/admin/positions-crud",
+      path: "/admin/positions",
       builder: (context, state) => const PositionCrudScreen(),
     ),
 
     GoRoute(
-      path: "/admin/departments-crud",
+      path: "/admin/departments",
       builder: (context, state) => const DepartmentCrudScreen(),
     ),
 

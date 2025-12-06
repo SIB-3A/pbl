@@ -48,4 +48,4 @@ Route::get('positions/{id}', [PositionController::class, 'show']);
 // TODO: Add 'auth:sanctum' and 'admin' middleware when login is ready
 Route::post('positions', [PositionController::class, 'store']);
 Route::patch('positions/{id}', [PositionController::class, 'update']);
-Route::delete('positions/{id}', [PositionController::class, 'delete']);
+Route::delete('positions/{id}', [PositionController::class, 'destroy']);
