@@ -13,11 +13,9 @@ Route::get("/user/{id}", [UserController::class, "show_user"])->middleware(
 Route::get("/users", [UserController::class, "show_users"])->middleware(
     "auth:sanctum",
 );
-Route::get("/departements", [
-    DepartementController::class,
-    "show_departements",
-])->middleware("auth:sanctum");
-Route::get("/positions", [PositionController::class, "show_positions"]);
+Route::get("/departements", [DepartementController::class,"show_departements",])->middleware("auth:sanctum");
+Route::get("/positions", [PositionController::class, "show_positions"])->middleware("auth:sanctum");
+Route::get("/position/{userId}", [PositionController::class, "show_position"])->middleware("auth:sanctum");
 
 Route::post("/login", [AuthController::class, "login"]);
 Route::post("/register", [AuthController::class, "register"])->middleware(

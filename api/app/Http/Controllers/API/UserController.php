@@ -30,6 +30,7 @@ class UserController extends Controller
                 $query->select("id", "name");
             },
         ])->find($id);
+
         if (!$user) {
             return ResponseWrapper::make(
                 "User not found",
@@ -63,8 +64,7 @@ class UserController extends Controller
             "employee.position" => function ($query) {
                 $query->select("id", "name");
             },
-        ])
-        ->get();
+        ])->get();
 
         return ResponseWrapper::make("Users found", 200, true, $data, null);
     }
