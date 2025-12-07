@@ -66,6 +66,22 @@ final GoRouter router = GoRouter(
               path: "/admin/register",
               builder: (context, state) => const RegisterScreen(),
             ),
+            // ✅ TAMBAHKAN INI (di dalam Admin Shell Branch 2)
+            GoRoute(
+              path: "/admin/edit-employee",
+              builder: (context, state) {
+                final employeeId = state.extra as int?;
+
+                if (employeeId == null) {
+                  return const Scaffold(
+                    body: Center(
+                      child: Text('Error: ID karyawan tidak ditemukan'),
+                    ),
+                  );
+                }
+                return EditAdminEmployeeScreen(employeeId: employeeId);
+              },
+            ),
           ],
         ),
         // Branch 3: Admin Profile & Settings
@@ -75,7 +91,6 @@ final GoRouter router = GoRouter(
               path: "/admin/profile",
               builder: (context, state) => const ProfileScreen(),
             ),
-           
           ],
         ),
       ],
@@ -193,20 +208,20 @@ final GoRouter router = GoRouter(
     ),
 
     // Admin - Edit management (non-shell)
-    GoRoute(
-      path: "/employee/edit-management/:id",
-      builder: (context, state) {
-        final employee = state.extra as EmployeeModel?;
+    // GoRoute(
+    //   path: "/employee/edit-management/:id",
+    //   builder: (context, state) {
+    //     final employee = state.extra as EmployeeModel?;
 
-        if (employee == null) {
-          return const Scaffold(
-            body: Center(child: Text('Error: Data karyawan tidak ditemukan')),
-          );
-        }
+    //     if (employee == null) {
+    //       return const Scaffold(
+    //         body: Center(child: Text('Error: Data karyawan tidak ditemukan')),
+    //       );
+    //     }
 
-        return EditAdminEmployeeScreen(employee: employee);
-      },
-    ),
+    //     return EditAdminEmployeeScreen(employee: employee);
+    //   },
+    // ),
 
     // Alternative CRUD routes (non-shell) untuk backward compatibility
     GoRoute(

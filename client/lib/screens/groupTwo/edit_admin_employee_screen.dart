@@ -1,22 +1,30 @@
 import 'package:client/models/department_model.dart';
 import 'package:client/models/employee_model.dart';
 import 'package:client/models/position_model.dart';
+import 'package:client/models/user_model.dart';
 import 'package:client/services/department_service.dart';
 import 'package:client/services/employee_service.dart';
 import 'package:client/services/position_service.dart';
+import 'package:client/services/user_service.dart';
 import 'package:client/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class EditAdminEmployeeScreen extends StatefulWidget {
-  final EmployeeModel employee;
-  const EditAdminEmployeeScreen({super.key, required this.employee});
+  final int employeeId;
+
+  const EditAdminEmployeeScreen({super.key, required this.employeeId});
 
   @override
-  State<EditAdminEmployeeScreen> createState() => _EditAdminEmployeeScreenState();
+  State<EditAdminEmployeeScreen> createState() =>
+      _EditAdminEmployeeScreenState();
 }
 
 class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
+  // Controllers
+  final TextEditingController _emailController = TextEditingController();
+
+  // State variables
   String? _status;
   int? _positionId;
   int? _departmentId;
@@ -24,38 +32,117 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
   List<PositionModel> _positions = [];
   List<DepartmentModel> _departments = [];
 
+  EmployeeModel? _employee;
+  UserModel<EmployeeModel>? _user;
+
   bool _isLoading = false;
   bool _isLoadingData = true;
 
   @override
   void initState() {
     super.initState();
-    _status = widget.employee.employmentStatus.isNotEmpty ? widget.employee.employmentStatus : null;
-    _positionId = widget.employee.positionId;
-    _departmentId = widget.employee.departmentId;
-
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
     setState(() => _isLoadingData = true);
 
     try {
-      final positionsResponse = await PositionService.instance.getPositions();
-      final departmentsResponse = await DepartmentService.instance.getDepartments();
+      // Load employee data
+      final employeeResponse = await EmployeeService.instance.getEmployeeById(
+        widget.employeeId,
+      );
 
+      // ✅ DEBUG LOG
+      debugPrint('=== EMPLOYEE RESPONSE ===');
+      debugPrint('Success: ${employeeResponse.success}');
+      debugPrint('Data: ${employeeResponse.data}');
+
+      if (employeeResponse.success && employeeResponse.data != null) {
+        _employee = employeeResponse.data!;
+
+        // ✅ DEBUG LOG
+        debugPrint('Employee ID: ${_employee!.id}');
+        debugPrint('Employee User ID: ${_employee!.userId}');
+        debugPrint('Employee Full Name: ${_employee!.fullName}');
+
+        // Set initial values
+        _status = _employee!.employmentStatus.isNotEmpty
+            ? _employee!.employmentStatus
+            : null;
+        _positionId = _employee!.positionId;
+        _departmentId = _employee!.departmentId;
+
+        // ✅ DEBUG LOG
+        debugPrint('Initial Status: $_status');
+        debugPrint('Initial Position ID: $_positionId');
+        debugPrint('Initial Department ID: $_departmentId');
+
+        // Load user data for email
+        if (_employee!.userId != null) {
+          // ✅ DEBUG LOG
+          debugPrint('=== FETCHING USER DATA ===');
+          debugPrint('User ID to fetch: ${_employee!.userId}');
+
+          final userResponse = await UserService.instance.getUser(
+            _employee!.userId,
+          );
+
+          // ✅ DEBUG LOG
+          debugPrint('=== USER RESPONSE ===');
+          debugPrint('Success: ${userResponse.success}');
+          debugPrint('Message: ${userResponse.message}');
+          debugPrint('Data: ${userResponse.data}');
+
+          if (userResponse.success && userResponse.data != null) {
+            _user = userResponse.data;
+
+            // ✅ DEBUG LOG
+            debugPrint('User Email: ${_user!.email}');
+            debugPrint('User ID: ${_user!.id}');
+
+            _emailController.text = _user!.email;
+
+            // ✅ FORCE REBUILD
+            setState(() {});
+          } else {
+            debugPrint('❌ Failed to load user: ${userResponse.message}');
+          }
+        } else {
+          debugPrint('❌ Employee userId is null');
+        }
+      } else {
+        debugPrint('❌ Failed to load employee: ${employeeResponse.message}');
+      }
+
+      // Load positions
+      final positionsResponse = await PositionService.instance.getPositions();
       if (positionsResponse.success && positionsResponse.data != null) {
         _positions = positionsResponse.data!;
+        debugPrint('✅ Loaded ${_positions.length} positions');
       }
 
+      // Load departments
+      final departmentsResponse = await DepartmentService.instance
+          .getDepartments();
       if (departmentsResponse.success && departmentsResponse.data != null) {
         _departments = departmentsResponse.data!;
+        debugPrint('✅ Loaded ${_departments.length} departments');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('❌ ERROR in _loadData: $e');
+      debugPrint('Stack trace: $stackTrace');
+
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal memuat data: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Gagal memuat data: $e')));
       }
     } finally {
       if (mounted) {
@@ -65,36 +152,99 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
   }
 
   Future<void> _save() async {
+    // ✅ VALIDATION
+    if (_employee == null) {
+      debugPrint('❌ Employee is null');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Data karyawan tidak ditemukan'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
-      final data = <String, dynamic>{};
+      // ✅ DEBUG LOG
+      debugPrint('=== SAVING DATA ===');
+      debugPrint('Employee ID: ${_employee!.id}');
+      debugPrint('Status: $_status');
+      debugPrint('Position ID: $_positionId');
+      debugPrint('Department ID: $_departmentId');
+      debugPrint('Email: ${_emailController.text}');
 
-      if (_status != null) data['employment_status'] = _status;
-      if (_positionId != null) data['position_id'] = _positionId;
-      if (_departmentId != null) data['department_id'] = _departmentId;
+      // 1. Update employee data
+      final employeeData = <String, dynamic>{};
 
-      final response = await EmployeeService.instance.updateManagement(
-        widget.employee.id,
-        data,
-      );
+      if (_status != null) employeeData['employment_status'] = _status;
+      if (_positionId != null) employeeData['position_id'] = _positionId;
+      if (_departmentId != null) employeeData['department_id'] = _departmentId;
 
-      if (mounted) {
-        if (response.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Data karyawan berhasil diperbarui')),
-          );
-          context.pop(true);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(response.message)),
-          );
+      debugPrint('Employee data to update: $employeeData');
+
+      // ✅ ONLY UPDATE IF THERE'S DATA
+      if (employeeData.isNotEmpty) {
+        final employeeResponse = await EmployeeService.instance
+            .updateManagement(_employee!.id, employeeData);
+
+        debugPrint('Employee update response: ${employeeResponse.success}');
+        debugPrint('Employee update message: ${employeeResponse.message}');
+
+        if (!employeeResponse.success) {
+          throw Exception('Gagal update employee: ${employeeResponse.message}');
         }
       }
-    } catch (e) {
+
+      // 2. Update user email if changed
+      if (_user != null && _emailController.text != _user!.email) {
+        debugPrint('=== UPDATING EMAIL ===');
+        debugPrint('Old email: ${_user!.email}');
+        debugPrint('New email: ${_emailController.text}');
+
+        final userData = {'email': _emailController.text};
+
+        final userResponse = await UserService.instance.updateUser(
+          _user!.id,
+          userData,
+        );
+
+        debugPrint('User update response: ${userResponse.success}');
+        debugPrint('User update message: ${userResponse.message}');
+
+        if (!userResponse.success) {
+          throw Exception('Gagal update email: ${userResponse.message}');
+        }
+      } else {
+        debugPrint('Email tidak berubah atau user null');
+      }
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menyimpan: $e')),
+          const SnackBar(
+            content: Text('✅ Data karyawan berhasil diperbarui'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // ✅ DELAY SEBELUM POP
+        await Future.delayed(const Duration(milliseconds: 500));
+
+        if (mounted) {
+          context.pop(true);
+        }
+      }
+    } catch (e, stackTrace) {
+      debugPrint('❌ ERROR in _save: $e');
+      debugPrint('Stack trace: $stackTrace');
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Gagal menyimpan: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -105,6 +255,8 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
   }
 
   Widget _buildEmployeeInfo() {
+    if (_employee == null) return const SizedBox.shrink();
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -118,13 +270,13 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
           CircleAvatar(
             radius: 40,
             backgroundColor: const Color(0xFF1B7FA8),
-            backgroundImage: widget.employee.profilePhotoUrl != null
-                ? NetworkImage(widget.employee.profilePhotoUrl!)
+            backgroundImage: _employee!.profilePhotoUrl != null
+                ? NetworkImage(_employee!.profilePhotoUrl!)
                 : null,
-            child: widget.employee.profilePhotoUrl == null
+            child: _employee!.profilePhotoUrl == null
                 ? Text(
-                    widget.employee.fullName.isNotEmpty
-                        ? widget.employee.fullName[0].toUpperCase()
+                    _employee!.fullName.isNotEmpty
+                        ? _employee!.fullName[0].toUpperCase()
                         : '?',
                     style: const TextStyle(
                       color: Colors.white,
@@ -136,7 +288,7 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            widget.employee.fullName,
+            _employee!.fullName,
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -145,6 +297,40 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required String label,
+    required TextEditingController controller,
+    TextInputType? keyboardType,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.grey[50],
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFF1B7FA8), width: 2),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -157,10 +343,7 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 8),
         dropdown,
@@ -207,6 +390,15 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
                           _buildEmployeeInfo(),
                           const SizedBox(height: 24),
 
+                          // ✅ EMAIL FIELD (NEW)
+                          _buildTextField(
+                            label: "Email",
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+
+                          const SizedBox(height: 16),
+
                           // Status Karyawan
                           _buildDropdownField(
                             label: "Status Karyawan",
@@ -230,12 +422,7 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
                                   ),
                                 ),
                               ),
-                              items: [
-                                'aktif',
-                                'cuti',
-                                'resign',
-                                'phk',
-                              ]
+                              items: ['aktif', 'cuti', 'resign', 'phk']
                                   .map(
                                     (s) => DropdownMenuItem(
                                       value: s,
@@ -275,8 +462,10 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
                               items: [
                                 const DropdownMenuItem<int>(
                                   value: null,
-                                  child: Text('Pilih posisi',
-                                      style: TextStyle(color: Colors.grey)),
+                                  child: Text(
+                                    'Pilih posisi',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
                                 ),
                                 ..._positions.map(
                                   (p) => DropdownMenuItem<int>(
@@ -285,7 +474,8 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
                                   ),
                                 ),
                               ],
-                              onChanged: (val) => setState(() => _positionId = val),
+                              onChanged: (val) =>
+                                  setState(() => _positionId = val),
                             ),
                           ),
 
@@ -317,8 +507,10 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
                               items: [
                                 const DropdownMenuItem<int>(
                                   value: null,
-                                  child: Text('Pilih departemen',
-                                      style: TextStyle(color: Colors.grey)),
+                                  child: Text(
+                                    'Pilih departemen',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
                                 ),
                                 ..._departments.map(
                                   (d) => DropdownMenuItem<int>(
@@ -327,7 +519,8 @@ class _EditAdminEmployeeScreenState extends State<EditAdminEmployeeScreen> {
                                   ),
                                 ),
                               ],
-                              onChanged: (val) => setState(() => _departmentId = val),
+                              onChanged: (val) =>
+                                  setState(() => _departmentId = val),
                             ),
                           ),
 
