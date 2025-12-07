@@ -88,31 +88,26 @@ Widget profileSection(BuildContext context, UserModel<EmployeeModel>? user) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _ProfileField(
-                title: "Nama Awal",
-                value: user?.employee?.firstName ?? "",
+                title: "Nama Lengkap",
+                value: user?.employee?.fullName ?? "Tidak ada nama",
               ),
               _ProfileField(
-                title: "Nama Akhir",
-                value: user?.employee?.lastName ?? "",
-              ),
-              _ProfileField(title: "Email", value: user?.email ?? ""),
-              _ProfileField(
-                title: "Jenis Kelamin",
-                value: parseGender(user?.employee?.gender ?? ""),
+                title: "Email",
+                value: user?.email ?? "Tidak ada email",
               ),
               _ProfileField(
-                title: "Alamat",
-                value: user?.employee?.address ?? "",
-              ),
-              _ProfileField(
-                title: "Jabatan",
-                value: user?.employee?.position ?? "",
+                title: "Posisi",
+                value: user?.employee?.position?.name ?? "Tidak ada posisi",
               ),
               _ProfileField(
                 title: "Departemen",
-                value: user?.employee?.department ?? "",
+                value:
+                    user?.employee?.department?.name ?? "Tidak ada departemen",
               ),
-
+              _ProfileField(
+                title: "Status",
+                value: user?.employee?.employmentStatus ?? "Tidak aktif",
+              ),
               _ProfileField(
                 title: "Jatah Cuti",
                 value: "4",

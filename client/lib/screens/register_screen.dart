@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
+import 'package:client/models/department_model.dart'; 
+import 'package:client/models/position_model.dart'; 
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -362,23 +364,75 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _formDropdownJabatan() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
-      child: FutureBuilder(
-        future: PositionService.instance.getPositions(),
+      child: FutureBuilder<ApiResponse<List<PositionModel>>>(
+        future: PositionService.instance.getPositions(), 
         builder: (context, snapshot) {
-          List<DropdownMenuItem<String>>? positions = snapshot.data?.data?.map((
+          // Loading state
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Jabatan",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ],
+            );
+          }
+
+          // Error state
+          if (snapshot.hasError || snapshot.data?.success == false) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Jabatan",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                FormBuilderDropdown<String>(
+                  name: "jabatan",
+                  validator: requiredField("Jabatan"),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  hint: const Text("Pilih Jabatan"),
+                  items: const [
+                    DropdownMenuItem(
+                      value: "",
+                      enabled: false,
+                      child: Text("Gagal memuat data"),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          }
+
+          // Success state
+          final positions = snapshot.data?.data ?? [];
+
+          List<DropdownMenuItem<String>> positionItems = positions.map((
             position,
           ) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return DropdownMenuItem<String>(
-                value: "",
-                child: Center(child: CircularProgressIndicator()),
-              );
-            } else {
-              return DropdownMenuItem<String>(
-                value: position.id.toString(),
-                child: Text(position.name),
-              );
-            }
+            return DropdownMenuItem<String>(
+              value: position.id.toString(),
+              child: Text(position.name),
+            );
           }).toList();
 
           return Column(
@@ -400,9 +454,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 hint: const Text("Pilih Jabatan"),
-                items:
-                    positions ??
-                    [DropdownMenuItem(child: Text("Tidak ada data"))],
+                items: positionItems.isEmpty
+                    ? [
+                        const DropdownMenuItem(
+                          value: "",
+                          enabled: false,
+                          child: Text("Tidak ada data"),
+                        ),
+                      ]
+                    : positionItems,
               ),
             ],
           );
@@ -415,24 +475,77 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _formDropdownDepartemen() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
-      child: FutureBuilder(
-        future: DepartmentService.instance.getDepartements(),
+      child: FutureBuilder<ApiResponse<List<DepartmentModel>>>(
+        future: DepartmentService.instance
+            .getDepartments(),
         builder: (context, snapshot) {
-          List<DropdownMenuItem<String>>? departments = snapshot.data?.data
-              ?.map((department) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return DropdownMenuItem<String>(
-                    value: "",
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                } else {
-                  return DropdownMenuItem<String>(
-                    value: department.id.toString(),
-                    child: Text(department.name),
-                  );
-                }
-              })
-              .toList();
+          // Loading state
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Departemen",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+              ],
+            );
+          }
+
+          // Error state
+          if (snapshot.hasError || snapshot.data?.success == false) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Departemen",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                FormBuilderDropdown<String>(
+                  name: "departemen",
+                  validator: requiredField("Departemen"),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  hint: const Text("Pilih Departemen"),
+                  items: const [
+                    DropdownMenuItem(
+                      value: "",
+                      enabled: false,
+                      child: Text("Gagal memuat data"),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          }
+
+          // Success state
+          final departments = snapshot.data?.data ?? [];
+
+          List<DropdownMenuItem<String>> departmentItems = departments.map((
+            department,
+          ) {
+            return DropdownMenuItem<String>(
+              value: department.id.toString(),
+              child: Text(department.name),
+            );
+          }).toList();
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -453,9 +566,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
                 hint: const Text("Pilih Departemen"),
-                items:
-                    departments ??
-                    [DropdownMenuItem(child: Text("Tidak ada data"))],
+                items: departmentItems.isEmpty
+                    ? [
+                        const DropdownMenuItem(
+                          value: "",
+                          enabled: false,
+                          child: Text("Tidak ada data"),
+                        ),
+                      ]
+                    : departmentItems,
               ),
             ],
           );

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Department extends Model
 {
+    protected $table = 'departments';
     protected $fillable = ['name', 'latitude', 'longitude', 'radius_meters'];
 
     protected $casts = [

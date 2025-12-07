@@ -144,12 +144,13 @@ class EmployeeScreen extends StatelessWidget {
                                 "${user.employee?.firstName ?? ''} ${user.employee?.lastName ?? ''}"
                                     .trim();
 
-                            // TODO: ganti "Ini itu role" dengan field role sebenarnya kalau sudah ada di model
-                            final position = user.employee?.position;
+                            // ✅ FIX: Ambil name dari PositionModel
+                            final positionName = user.employee?.position?.name;
 
                             return CustomCard(
                               name: fullName.isEmpty ? "Tanpa Nama" : fullName,
-                              position: position,
+                              position:
+                                  positionName, // ✅ Pass String, bukan PositionModel
                               onTap: () {
                                 // kalau mau detail di tap card utama
                                 context.push(

@@ -42,6 +42,12 @@ dependencies:
   flutter_native_splash: ^2.4.7
   flutter_form_builder: ^10.2.0
   form_builder_validators: ^11.2.0
+  image_picker: ^1.0.7
+  path_provider: ^2.1.1
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1  
+  geolocator: ^14.0.2  
+  url_launcher: ^6.2.0
 
 dev_dependencies:
   flutter_test:

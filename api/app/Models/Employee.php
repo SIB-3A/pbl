@@ -17,11 +17,27 @@ class Employee extends Model
         'position_id',
         'department_id',
         'employment_status',
+        'profile_photo', 
     ];
 
     protected $casts = [
         'employment_status' => 'string',
     ];
+
+    protected $appends = ['profile_photo_url'];
+
+    public function getProfilePhotoUrlAttribute()
+    {
+        if ($this->profile_photo) {
+            return url('storage/' . $this->profile_photo);
+        }
+        return null;
+    }
+
+    public function getFullNameAttribute()
+    {
+        return trim("{$this->first_name} {$this->last_name}");
+    }
 
     // Relasi
     public function user(): BelongsTo
