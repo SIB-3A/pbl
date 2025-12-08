@@ -29,7 +29,7 @@ class RegisterService extends BaseService {
       ),
     );
     final json = response.data;
-    if (response.statusCode != 200) {
+    if (response.statusCode != 200 && response.statusCode != 201) {
       log("Error: Register failed: ${json['message']}");
       return ApiResponse(
         message: "Gagal membuat akun",

@@ -1,6 +1,8 @@
 import 'package:client/screens/employee_screen.dart';
 import 'package:client/screens/home_screen.dart';
 import 'package:client/screens/login_screen.dart';
+import 'package:client/screens/attendance_screen.dart';  
+import 'package:client/screens/schedule_screen.dart';    
 import 'package:client/screens/payroll_screen.dart';
 import 'package:client/screens/forgot_password_screen.dart';
 import 'package:client/screens/profile_screen.dart';
@@ -8,16 +10,16 @@ import 'package:client/screens/change_password_screen.dart';
 import 'package:client/screens/register_screen.dart';
 import 'package:client/services/auth_service.dart';
 import 'package:client/widgets/navbar_admin.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:client/models/employee_model.dart';
-import 'package:client/screens/groupTwo/admin_dashboard_screen.dart';
-import 'package:client/screens/groupTwo/department_crud_screen.dart';
-import 'package:client/screens/groupTwo/edit_admin_employee_screen.dart';
-import 'package:client/screens/groupTwo/edit_personal_screen.dart';
-import 'package:client/screens/groupTwo/employee_detail_screen.dart';
-import 'package:client/screens/groupTwo/employee_list_screen.dart';
-import 'package:client/screens/groupTwo/position_crud_screen.dart';
-import 'package:client/screens/groupTwo/role_selection_screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';  
+import 'package:client/models/employee_model.dart';  
+import 'package:client/screens/groupTwo/admin_dashboard_screen.dart';  
+import 'package:client/screens/groupTwo/department_crud_screen.dart';  
+import 'package:client/screens/groupTwo/edit_admin_employee_screen.dart';  
+import 'package:client/screens/groupTwo/edit_personal_screen.dart';  
+import 'package:client/screens/groupTwo/employee_detail_screen.dart';  
+import 'package:client/screens/groupTwo/employee_list_screen.dart';  
+import 'package:client/screens/groupTwo/position_crud_screen.dart';  
+import 'package:client/screens/groupTwo/role_selection_screen.dart';  
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'screens/admin_screen.dart';
@@ -49,6 +51,7 @@ final GoRouter router = GoRouter(
             ),
           ],
         ),
+        
         // Branch 2: Employee Management
         StatefulShellBranch(
           routes: [
@@ -66,12 +69,11 @@ final GoRouter router = GoRouter(
               path: "/admin/register",
               builder: (context, state) => const RegisterScreen(),
             ),
-            // ✅ TAMBAHKAN INI (di dalam Admin Shell Branch 2)
+            // ✅ EDIT EMPLOYEE 
             GoRoute(
               path: "/admin/edit-employee",
               builder: (context, state) {
                 final employeeId = state.extra as int?;
-
                 if (employeeId == null) {
                   return const Scaffold(
                     body: Center(
@@ -84,12 +86,33 @@ final GoRouter router = GoRouter(
             ),
           ],
         ),
+        
         // Branch 3: Admin Profile & Settings
         StatefulShellBranch(
           routes: [
             GoRoute(
               path: "/admin/profile",
               builder: (context, state) => const ProfileScreen(),
+            ),
+          ],
+        ),
+        
+        // ✅ Branch 4: Attendance (FROM INCOMING)
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: "/admin/attendance",
+              builder: (context, state) => const AttendanceScreen(),
+            ),
+          ],
+        ),
+        
+        // ✅ Branch 5: Schedule (FROM INCOMING)
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: "/admin/schedule",
+              builder: (context, state) => const ScheduleScreen(),
             ),
           ],
         ),
@@ -105,6 +128,7 @@ final GoRouter router = GoRouter(
         bottomNavigationBar: NavbarUser(navigationShell: navigationShell),
       ),
       branches: [
+        // Branch 1: Home
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -113,6 +137,8 @@ final GoRouter router = GoRouter(
             ),
           ],
         ),
+        
+        // Branch 2: Profile
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -121,18 +147,34 @@ final GoRouter router = GoRouter(
             ),
           ],
         ),
+        
+        // ✅ Branch 3: Attendance (FROM INCOMING)
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: "/attendance",
+              builder: (context, state) => const AttendanceScreen(),
+            ),
+          ],
+        ),
       ],
     ),
-    GoRoute(
-      path: "/payroll",
-      builder: (context, state) => const PayrollScreen(),
-    ),
+
     // ========================================
     // NON-SHELL ROUTES (Full Screen)
     // ========================================
 
+    // Payroll
+    GoRoute(
+      path: "/payroll",
+      builder: (context, state) => const PayrollScreen(),
+    ),
+
     // Authentication routes
-    GoRoute(path: "/login", builder: (context, state) => const LoginScreen()),
+    GoRoute(
+      path: "/login",
+      builder: (context, state) => const LoginScreen(),
+    ),
     GoRoute(
       path: "/forgot-password",
       builder: (context, state) => ForgotPasswordScreen(),
@@ -143,7 +185,7 @@ final GoRouter router = GoRouter(
     ),
 
     // ========================================
-    // GROUP TWO ROUTES
+    // GROUP TWO ROUTES 
     // ========================================
 
     // Role selection screen
@@ -207,23 +249,7 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const AdminDashboardScreen(),
     ),
 
-    // Admin - Edit management (non-shell)
-    // GoRoute(
-    //   path: "/employee/edit-management/:id",
-    //   builder: (context, state) {
-    //     final employee = state.extra as EmployeeModel?;
-
-    //     if (employee == null) {
-    //       return const Scaffold(
-    //         body: Center(child: Text('Error: Data karyawan tidak ditemukan')),
-    //       );
-    //     }
-
-    //     return EditAdminEmployeeScreen(employee: employee);
-    //   },
-    // ),
-
-    // Alternative CRUD routes (non-shell) untuk backward compatibility
+    // Alternative CRUD routes (non-shell)
     GoRoute(
       path: "/admin/positions",
       builder: (context, state) => const PositionCrudScreen(),

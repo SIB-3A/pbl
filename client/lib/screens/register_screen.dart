@@ -28,7 +28,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     "jenis_kelamin": "P", // "P" for Pria, "L" for Wanita
     "alamat": "123 Main St",
     "jabatan": "2", // Example ID for Jabatan
-    "departemen": "3", // Example ID for Departemen
+    "departemen": "1", // Example ID for Departemen
     "password": "123456",
   };
   // --------- CENTRALIZED VALIDATOR ---------- //
