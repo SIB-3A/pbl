@@ -13,8 +13,8 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
             $table->tinyInteger('check_clock_type')->comment('0 = Reguler, 1 = Lembur Khusus');
             $table->date('date');
-            $table->time('clock_in');
-            $table->time('clock_out');
+            $table->time('clock_in')->nullable();
+            $table->time('clock_out')->nullable();
             $table->time('overtime_start')->nullable();
             $table->time('overtime_end')->nullable();
             $table->decimal('latitude', 10, 8)->nullable();
