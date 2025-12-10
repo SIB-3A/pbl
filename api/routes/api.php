@@ -13,71 +13,59 @@ use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\API\PasswordChangeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get("/user/{id}", [UserController::class, "show_user"])->middleware(
-    "auth:sanctum",
-);
-Route::get("/users", [UserController::class, "show_users"])->middleware(
-    "auth:sanctum",
-);
-Route::patch("/user/{id}", [UserController::class, "update_user"])->middleware(
-    "auth:sanctum",
-);
-Route::get("/departements", [DepartmentController::class,"show_departements",])->middleware("auth:sanctum");
-Route::get("/positions", [PositionController::class, "show_positions"])->middleware("auth:sanctum");
-Route::get("/position/{userId}", [PositionController::class, "show_position"])->middleware("auth:sanctum");
-
-// Auth routes
+// ========================================
+// AUTHENTICATION ROUTES (PUBLIC)
+// ========================================
 Route::post("/login", [AuthController::class, "login"]);
-Route::post("/register", [AuthController::class, "register"])->middleware(
-    "auth:sanctum",
-);
-
 Route::post("/send-token", [PasswordChangeController::class, "send_token"]);
 Route::post("/check-token", [PasswordChangeController::class, "check_token"]);
 Route::post("/change-password", [PasswordChangeController::class, "change_password"]);
 
+// ========================================
+// PROTECTED ROUTES (AUTH REQUIRED)
+// ========================================
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/absen/status', [AttendanceController::class, 'statusHariIni']);
-    Route::post('/absen/in', [AttendanceController::class, 'clockIn']);
-    Route::post('/absen/out', [AttendanceController::class, 'clockOut']);
+    
+    // ========== USER ROUTES ==========
+    Route::get("/user/{id}", [UserController::class, "show_user"]);
+    Route::get("/users", [UserController::class, "show_users"]);
+    Route::patch("/user/{id}", [UserController::class, "update_user"]);
+    Route::post("/register", [AuthController::class, "register"]);
+
+    // ========== ATTENDANCE ROUTES ==========
+    Route::prefix('absen')->group(function () {
+        Route::get('/status', [AttendanceController::class, 'statusHariIni']);
+        Route::post('/in', [AttendanceController::class, 'clockIn']);
+        Route::post('/out', [AttendanceController::class, 'clockOut']);
+    });
     Route::post('/lembur/in', [AttendanceController::class, 'lemburIn']);
     Route::post('/lembur/out', [AttendanceController::class, 'lemburOut']);
-});
 
-Route::middleware('auth:sanctum')->group(function () {
+    // ========== SCHEDULE ROUTES ==========
     Route::prefix('schedule')->group(function () {
         Route::get('/year/{year?}', [ScheduleController::class, 'getYearSchedule']);
         Route::post('/holiday', [ScheduleController::class, 'addHoliday']);
     });
+
+    // ========== EMPLOYEE ROUTES ==========
+    Route::get('employees', [EmployeeController::class, 'index']);
+    Route::get('employees/{id}', [EmployeeController::class, 'show']);
+    Route::patch('employee/profile/{id}', [EmployeeProfileController::class, 'update']);
+    Route::patch('employee/management/{id}', [EmployeeManagementController::class, 'update']);
+
+    // ========== DEPARTMENT ROUTES ==========
+    Route::get('departments', [DepartmentController::class, 'index']);
+    Route::get('departments/{id}', [DepartmentController::class, 'show']);
+    Route::get('departements', [DepartmentController::class, 'index']); // backward compatibility
+    Route::post('departments', [DepartmentController::class, 'store']);
+    Route::patch('departments/{id}', [DepartmentController::class, 'update']);
+    Route::delete('departments/{id}', [DepartmentController::class, 'destroy']);
+
+    // ========== POSITION ROUTES ==========
+    Route::get('positions', [PositionController::class, 'index']);
+    Route::get('positions/{id}', [PositionController::class, 'show']);
+    Route::get('position/{userId}', [PositionController::class, 'show_position']);
+    Route::post('positions', [PositionController::class, 'store']);
+    Route::patch('positions/{id}', [PositionController::class, 'update']);
+    Route::delete('positions/{id}', [PositionController::class, 'destroy']);
 });
-
-// Employee routes (read only)
-Route::get('employees', [EmployeeController::class, 'index']);
-Route::get('employees/{id}', [EmployeeController::class, 'show']);
-
-// Employee profile routes (for logged-in employee)
-Route::patch('employee/profile/{id}', [EmployeeProfileController::class, 'update']);
-
-// Employee management routes (for admin only)
-// TODO: Add 'auth:sanctum' and 'admin' middleware when login is ready
-Route::patch('employee/management/{id}', [EmployeeManagementController::class, 'update']);
-
-// Department routes
-Route::get('departments', [DepartmentController::class, 'index']);
-Route::get('departments/{id}', [DepartmentController::class, 'show']);
-
-// Department management (admin only)
-// TODO: Add 'auth:sanctum' and 'admin' middleware when login is ready
-Route::post('departments', [DepartmentController::class, 'store']);
-Route::patch('departments/{id}', [DepartmentController::class, 'update']);
-Route::delete('departments/{id}', [DepartmentController::class, 'destroy']);
-
-// Positions routes
-Route::get('positions', [PositionController::class, 'index']);
-Route::get('positions/{id}', [PositionController::class, 'show']);
-
-// Position management (admin only)
-// TODO: Add 'auth:sanctum' and 'admin' middleware when login is ready
-Route::post('positions', [PositionController::class, 'store']);
-Route::patch('positions/{id}', [PositionController::class, 'update']);
-Route::delete('positions/{id}', [PositionController::class, 'destroy']);

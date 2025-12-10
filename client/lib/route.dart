@@ -59,17 +59,19 @@ final GoRouter router = GoRouter(
               path: "/admin/employee",
               builder: (context, state) => const EmployeeScreen(),
             ),
+            // ✅ UPDATED: Profile detail untuk admin view employee
             GoRoute(
               path: "/admin/profile-detail",
               builder: (context, state) {
-                return ProfileScreen(userId: state.extra as int);
+                final userId = state.extra as int?;
+                return ProfileScreen(userId: userId);
               },
             ),
             GoRoute(
               path: "/admin/register",
               builder: (context, state) => const RegisterScreen(),
             ),
-            // ✅ EDIT EMPLOYEE 
+            // ✅ EDIT EMPLOYEE (ADMIN MODE)
             GoRoute(
               path: "/admin/edit-employee",
               builder: (context, state) {
@@ -87,17 +89,17 @@ final GoRouter router = GoRouter(
           ],
         ),
         
-        // Branch 3: Admin Profile & Settings
+        // Branch 3: Admin Profile & Settings (OWN PROFILE)
         StatefulShellBranch(
           routes: [
             GoRoute(
               path: "/admin/profile",
-              builder: (context, state) => const ProfileScreen(),
+              builder: (context, state) => const ProfileScreen(), // No userId = own profile
             ),
           ],
         ),
         
-        // ✅ Branch 4: Attendance (FROM INCOMING)
+        // Branch 4: Attendance
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -107,7 +109,7 @@ final GoRouter router = GoRouter(
           ],
         ),
         
-        // ✅ Branch 5: Schedule (FROM INCOMING)
+        // Branch 5: Schedule
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -138,17 +140,17 @@ final GoRouter router = GoRouter(
           ],
         ),
         
-        // Branch 2: Profile
+        // Branch 2: Profile (EMPLOYEE OWN PROFILE)
         StatefulShellBranch(
           routes: [
             GoRoute(
               path: "/profile",
-              builder: (context, state) => const ProfileScreen(),
+              builder: (context, state) => const ProfileScreen(), // No userId = own profile
             ),
           ],
         ),
         
-        // ✅ Branch 3: Attendance (FROM INCOMING)
+        // Branch 3: Attendance
         StatefulShellBranch(
           routes: [
             GoRoute(
@@ -164,13 +166,29 @@ final GoRouter router = GoRouter(
     // NON-SHELL ROUTES (Full Screen)
     // ========================================
 
-    // Payroll
+    // ✅ EDIT PERSONAL (EMPLOYEE MODE)
+    GoRoute(
+      path: "/employee/edit-personal/:id",
+      builder: (context, state) {
+        final employee = state.extra as EmployeeModel?;
+
+        if (employee == null) {
+          return const Scaffold(
+            body: Center(child: Text('Error: Data karyawan tidak ditemukan')),
+          );
+        }
+
+        return EditPersonalScreen(employee: employee);
+      },
+    ),
+
+    // Payroll (requires auth)
     GoRoute(
       path: "/payroll",
       builder: (context, state) => const PayrollScreen(),
     ),
 
-    // Authentication routes
+    // Authentication routes (PUBLIC)
     GoRoute(
       path: "/login",
       builder: (context, state) => const LoginScreen(),
@@ -185,25 +203,21 @@ final GoRouter router = GoRouter(
     ),
 
     // ========================================
-    // GROUP TWO ROUTES 
+    // GROUP TWO ROUTES (LEGACY - OPTIONAL)
     // ========================================
 
-    // Role selection screen
     GoRoute(
       path: "/role-selection",
       builder: (context, state) => const RoleSelectionScreen(),
     ),
 
-    // ========== KARYAWAN MODE ==========
-
-    // Employee list (Karyawan mode)
     GoRoute(
       path: "/employee-list",
       builder: (context, state) =>
           const EmployeeListScreen(isKaryawanMode: true),
     ),
 
-    // Employee detail
+    // ⚠️ DEPRECATED: Use ProfileScreen instead
     GoRoute(
       path: "/employee-detail/:id",
       builder: (context, state) {
@@ -225,31 +239,11 @@ final GoRouter router = GoRouter(
       },
     ),
 
-    // Edit personal info (Karyawan mode)
-    GoRoute(
-      path: "/employee/edit-personal/:id",
-      builder: (context, state) {
-        final employee = state.extra as EmployeeModel?;
-
-        if (employee == null) {
-          return const Scaffold(
-            body: Center(child: Text('Error: Data karyawan tidak ditemukan')),
-          );
-        }
-
-        return EditPersonalScreen(employee: employee);
-      },
-    ),
-
-    // ========== ADMIN MODE (NON-SHELL) ==========
-
-    // Alternative admin dashboard (non-shell)
     GoRoute(
       path: "/admin-dashboard",
       builder: (context, state) => const AdminDashboardScreen(),
     ),
 
-    // Alternative CRUD routes (non-shell)
     GoRoute(
       path: "/admin/positions",
       builder: (context, state) => const PositionCrudScreen(),
@@ -260,7 +254,6 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const DepartmentCrudScreen(),
     ),
 
-    // Alternative employee list untuk admin (non-shell)
     GoRoute(
       path: "/admin/employee-list",
       builder: (context, state) =>
