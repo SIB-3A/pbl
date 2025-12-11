@@ -87,7 +87,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('positions/{id}', [PositionController::class, 'update']);
     Route::delete('positions/{id}', [PositionController::class, 'delete']);
 
-
     // ========== IZIN DASHBOARD ROUTES ==========
     Route::get('/izin-dashboard', IzinDashboardController::class)->middleware("auth:sanctum", );
     Route::get('/izin-list', [IzinDashboardController::class, 'izinList'])->middleware("auth:sanctum", );
